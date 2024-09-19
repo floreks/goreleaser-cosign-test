@@ -1,0 +1,75 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+
+version: 2
+
+# Requires a GoReleaser Pro to run
+partial:
+  by: goos
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: cli
+    targets:
+      - linux_amd64
+      - linux_arm64
+      - windows_amd64
+      - darwin_amd64
+      - darwin_arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s
+      - -w
+    binary: cli
+
+archives:
+  - id: cli
+    builds: [cli]
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github-native
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+signs:
+  - cmd: cosign
+    certificate: "${artifact}.pem"
+    artifacts: checksum
+    output: true
+    args:
+      - sign-blob
+      - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes"
+
+release:
+  name_template: "{{.ProjectName}}-v{{.Version}}"
+  header: |
+    ## CLI release ({{ .Date }})
+    Welcome to this new release of the CLI!
+
+git:
+  # What should be used to sort tags when gathering the current and previous
+  # tags if there are more than one tag in the same commit.
+  #
+  # Default: '-version:refname'
+  tag_sort: -version:creatordate
