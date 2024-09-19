@@ -53,7 +53,7 @@ signs:
   - cmd: cosign
     signature: "${artifact}.sig"
     certificate: "${artifact}.pem"
-    artifacts: all
+    artifacts: checksum
     args:
       - sign-blob
       - "--output-certificate=${certificate}"
