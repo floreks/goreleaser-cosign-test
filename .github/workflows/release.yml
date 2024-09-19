@@ -42,7 +42,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser-pro
-          version: latest
+          version: '~> v2'
           args: release --clean --split --timeout 90m
         env:
           CGO_LDFLAGS: "${{ matrix.goos == 'darwin' && '-framework UniformTypeIdentifiers' || '' }}"
@@ -58,6 +58,9 @@ jobs:
     needs: prepare
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
+    permissions:
+      contents: write # needed to write releases
+      id-token: write # needed for keyless signing
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -98,7 +101,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true' # do not run if cache hit
         with:
           distribution: goreleaser-pro
-          version: latest
+          version: '~> v2'
           args: continue --merge --timeout 90m
         env:
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
