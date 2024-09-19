@@ -51,9 +51,9 @@ changelog:
 
 signs:
   - cmd: cosign
+    signature: "${artifact}.sig"
     certificate: "${artifact}.pem"
-    artifacts: checksum
-    output: true
+    artifacts: all
     args:
       - sign-blob
       - "--output-certificate=${certificate}"
