@@ -106,5 +106,7 @@ jobs:
         env:
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           GORELEASER_CURRENT_TAG: ${{ github.ref_name }}
           GORELEASER_PREVIOUS_TAG: ${{ steps.release.outputs.prev }}
